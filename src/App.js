@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export default function App() {
   const [filteredClients, setFilteredClients] = useState([]);
   const [filterValue, setFilterValue] = useState("");
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(null || []);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -20,9 +20,14 @@ export default function App() {
   };
 
   const handleSelect = (data) => {
+    console.log(data);
     setSelected(data);
-    setFilterValue(data.name);
     setFilteredClients([]);
+    if (Array.isArray(data)) {
+      setFilterValue("");
+      return;
+    }
+    setFilterValue(data.name);
   };
 
   const fetchClients = async (value) => {

@@ -34,6 +34,7 @@ const Autocomplete = ({
     const data = list.find(({ id }) => id === selectedId);
     if (multiple) {
       setTagList((prevList) => [...prevList, data]);
+      onSelected((prevList) => [...prevList, data]);
       handleReset(event);
       inputRef.current.focus();
       return;
@@ -44,8 +45,6 @@ const Autocomplete = ({
   const handleDeleteTag = (itemToDelete) => {
     setTagList((prev) => prev.filter(({ id }) => id !== itemToDelete.id));
   };
-
-  console.log(tagList);
 
   return (
     <div className={styles.autocomplete}>

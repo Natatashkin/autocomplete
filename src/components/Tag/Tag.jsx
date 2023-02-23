@@ -6,7 +6,7 @@ const Tag = ({ item, onClick }) => {
   return (
     <span className={styles.tag}>
       {item.name}
-      <IconButton onClick={() => onClick(item)}>
+      <IconButton color="brown" onClick={() => onClick(item)}>
         <Close />
       </IconButton>
     </span>
