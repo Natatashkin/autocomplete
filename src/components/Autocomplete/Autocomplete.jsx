@@ -3,57 +3,59 @@ import IconButton from "../IconButton/IconButton";
 import Tag from "../Tag/Tag";
 import Close from "../../images/icons/Close";
 import styles from "./Autocomplete.module.scss";
-import { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 
 const Autocomplete = ({
   label,
   list,
-  listname,
   name,
-  value,
   onChange,
   onSelected,
+  selected,
   error,
   isLoading,
-  multiple,
+  multiple = false,
 }) => {
-  const [tagList, setTagList] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const inputRef = useRef(null);
   const showList = useMemo(
-    () => Boolean(list.length) && !isLoading,
+    () => Boolean(list?.length) && !isLoading,
     [list, isLoading]
   );
 
-  const handleReset = (e) => {
-    e.target = inputRef.current;
-    e.target.value = "";
-    onChange(e);
+  const handleChange = (e) => {
+    const { value } = e.target;
+    onChange(e, value);
+    setInputValue(value);
   };
 
-  const handleSelect = (event, selectedId) => {
-    const data = list.find(({ id }) => id === selectedId);
+  const handleReset = (e) => {
+    onChange({ target: { value: "" } });
+    setInputValue("");
+    onSelected(null);
+  };
+
+  const handleSelect = (selectedItem) => {
     if (multiple) {
-      setTagList((prevList) => [...prevList, data]);
-      // onSelected((prevList) => [...prevList, data]);
-      handleReset(event);
+      onSelected([selectedItem]);
       inputRef.current.focus();
       return;
     }
-    onSelected(data);
+    setInputValue("");
+    onSelected(selectedItem);
   };
 
-  const handleDeleteTag = (itemToDelete) => {
-    setTagList((prev) => prev.filter(({ id }) => id !== itemToDelete.id));
-  };
+  const isArrayValue = Array.isArray(selected);
+  const currentValue = !isArrayValue && selected ? selected.name : inputValue;
 
   return (
     <div className={styles.autocomplete}>
       {label && <label htmlFor="autocomplete">{label}</label>}
       <div className={styles.textfieldContainer}>
-        {Boolean(tagList.length) && (
+        {isArrayValue && Boolean(selected.length) && (
           <>
-            {tagList.map((item) => {
-              return <Tag item={item} onClick={handleDeleteTag} />;
+            {selected.map((item) => {
+              return <Tag key={item.id} item={item} onClick={handleSelect} />;
             })}
           </>
         )}
@@ -64,15 +66,13 @@ const Autocomplete = ({
             type="text"
             id="autocomplete"
             name={name}
-            list={listname}
-            value={value}
-            onChange={onChange}
+            value={currentValue}
+            onChange={handleChange}
             autoComplete="off"
             autoFocus
-            multiple
           />
 
-          {value.length > 2 && (
+          {(!!inputValue.length || selected) && (
             <IconButton onClick={handleReset}>
               <Close />
             </IconButton>
