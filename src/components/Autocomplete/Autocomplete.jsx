@@ -34,7 +34,7 @@ const Autocomplete = ({
     const data = list.find(({ id }) => id === selectedId);
     if (multiple) {
       setTagList((prevList) => [...prevList, data]);
-      onSelected((prevList) => [...prevList, data]);
+      // onSelected((prevList) => [...prevList, data]);
       handleReset(event);
       inputRef.current.focus();
       return;
@@ -69,6 +69,7 @@ const Autocomplete = ({
             onChange={onChange}
             autoComplete="off"
             autoFocus
+            multiple
           />
 
           {value.length > 2 && (
